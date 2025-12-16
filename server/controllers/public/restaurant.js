@@ -13,10 +13,21 @@ const router = express.Router();
 
 router.post("/restaurant-register", async (req, res) => {
   try {
-    let { fullName, email, phone, password, age, gender,restaurantName, restaurantaddress } = req.body;
+    let {
+      fullName,
+      email,
+      phone,
+      password,
+      age,
+      gender,
+      restaurantName,
+      restaurantaddress,
+    } = req.body;
     gender = gender.toLowerCase();
 
-    let dupUser = await restaurantModel.findOne({ $or: [{ email }, { phone }] });
+    let dupUser = await restaurantModel.findOne({
+      $or: [{ email }, { phone }],
+    });
     if (dupUser) {
       return res.status(400).json({ msg: "user already exist" });
     }
@@ -48,7 +59,7 @@ router.post("/restaurant-register", async (req, res) => {
         phoneToken,
       },
       restaurantName,
-      restaurantaddress
+      restaurantaddress,
     };
 
     await restaurantModel.insertOne(object);
@@ -62,7 +73,9 @@ router.get("/restaurant-email-verify/:token", async (req, res) => {
   try {
     let token = req.params.token;
 
-    let user = await restaurantModel.findOne({ "isVerifiedToken.emailToken": token });
+    let user = await restaurantModel.findOne({
+      "isVerifiedToken.emailToken": token,
+    });
 
     if (!user) {
       return res.status(400).json({ msg: "invalid link" });
@@ -82,8 +95,12 @@ router.get("/restaurant-phone-verify/:token", async (req, res) => {
   try {
     let token = req.params.token;
 
-    let user = await restaurantModel.findOne({ "isVerifiedToken.phoneToken": token });
-
+    let user = await restaurantModel.findOne({
+      "isVerifiedToken.phoneToken": token,
+    });
+    if (!user.isActive) {
+      return res.status(400).json({ msg: "deleted account" });
+    }
     if (!user) {
       return res.status(400).json({ msg: "invalid link" });
     }
@@ -135,7 +152,7 @@ router.post("/restaurant-forgotpass", async (req, res) => {
       "Otp for changing password",
       `Enter this otp to change password\nOTP : ${otp}\nvisit this site to enter otp and change password ${otpUrl}`
     );
-    await restaurantModel.updateOne({ email },{$set: { otp : otp }} );
+    await restaurantModel.updateOne({ email }, { $set: { otp: otp } });
     res.status(200).json({ msg: "OTP sent on your registered email" });
   } catch (error) {
     console.log(error);
@@ -146,7 +163,7 @@ router.post("/restaurant-forgotpass", async (req, res) => {
 router.post("/restaurant-setnewpassword", async (req, res) => {
   try {
     let { email, otp, password } = req.body;
-    let user = await restaurantModel.findOne({ $and: [{ email}, {otp }] });
+    let user = await restaurantModel.findOne({ $and: [{ email }, { otp }] });
     if (!user) {
       return res.status(400).json({ msg: "user not found" });
     }
@@ -155,11 +172,15 @@ router.post("/restaurant-setnewpassword", async (req, res) => {
     }
     let bPass = await bcrypt.hash(password, 10);
     console.log(bPass);
-    await restaurantModel.updateOne({otp},{$set:{password : bPass},$unset : {otp : "" }},{new : true})
-    res.status(200).json({msg : "password changed"})
+    await restaurantModel.updateOne(
+      { otp },
+      { $set: { password: bPass }, $unset: { otp: "" } },
+      { new: true }
+    );
+    res.status(200).json({ msg: "password changed" });
   } catch (error) {
     console.log(error);
     res.status(500).json({ msg: error });
   }
 });
-export default router
+export default router;

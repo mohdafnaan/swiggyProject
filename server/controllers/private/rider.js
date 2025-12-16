@@ -1,11 +1,13 @@
 import express from "express";
-import restaurantModel from "../../models/Restaurants/Restaurants.js";
-
 const router = express.Router();
-router.get("/restaurant-details",async (req,res)=>{
+
+import riderModel from "../../models/Riders/riders.js";
+
+
+router.get("/rider-details",async (req,res)=>{
     try {
         let user = req.user
-        let details = await restaurantModel.findOne({email : user.email},{restaurantName: 1,restaurantaddress : 1,_id : 0})
+        let details = await riderModel.findOne({email : user.email},{fullName:1,vehicleRc: 1,vehicleType : 1,_id : 0})
 
         res.status(200).json({msg : details})
     } catch (error) {
@@ -13,36 +15,35 @@ router.get("/restaurant-details",async (req,res)=>{
         res.status(500).json({msg : error})
     }
 })
-router.put("/restaurant-update", async (req, res) => {
+router.put("/rider-update", async (req, res) => {
   try {
     let user = req.user;
     console.log(user);
     let userInput = req.body;
-    await restaurantModel.updateOne(
+    await riderModel.updateOne(
       { email: user.email },
       { $set: userInput },
       { new: true }
     );
 
-    res.status(200).json({ msg: "restaurant details updated sucessfully" });
+    res.status(200).json({ msg: "user updated sucessfully" });
   } catch (error) {
     console.log(error);
     res.status(500).json({ msg: error });
   }
 });
-router.delete("/restaurant-delete", async (req, res) => {
+router.delete("/rider-delete", async (req, res) => {
   try {
     let user = req.user;
-    await restaurantModel.updateOne(
+    await riderModel.updateOne(
       { email: user.email },
       { $set: { isActive: false } },
       { new: true }
     );
-    res.status(200).json({ msg: "restaurant deleted sucessfully" });
+    res.status(200).json({ msg: "rider deleted sucessfully" });
   } catch (error) {
     console.log(error);
     res.status(500).json({ msg: error });
   }
 });
-router.post("/restaurant-rdgbhnm")
 export default router

@@ -113,6 +113,9 @@ router.post("/rider-login", async (req, res) => {
   try {
     let { email, password } = req.body;
     let user = await riderModel.findOne({ email });
+     if(!user.isActive){
+      return res.status(400).json({msg : "deleted account"})
+    }
     if (!user) {
       return res.status(400).json({ msg: "rider not found" });
     }

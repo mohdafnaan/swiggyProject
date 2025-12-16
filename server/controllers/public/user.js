@@ -105,6 +105,9 @@ router.post("/login", async (req, res) => {
     if (!user) {
       return res.status(400).json({ msg: "user not found" });
     }
+    if(!user.isActive){
+      return res.status(400).json({msg : "deleted account"})
+    }
     let hPass = await bcrypt.compare(password, user.password);
     if (!hPass) {
       return res.status(400).json({ msg: "invalid credentials" });
