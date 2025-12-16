@@ -44,5 +44,28 @@ router.delete("/restaurant-delete", async (req, res) => {
     res.status(500).json({ msg: error });
   }
 });
-router.post("/restaurant-rdgbhnm")
+router.post("/restaurant-addmenu",async (req,res)=>{
+    try {
+        let user = req.user;
+        let userInput = req.body;
+        await restaurantModel.updateOne({email : user.email},{$push : {menu : userInput}})
+        res.status(200).json({msg : `${userInput.dishName} added to menu`})
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({msg : error})
+    }
+})
+router.put("/restaurant-editmenu/:_id",async (req,res)=>{
+    try {
+        // let user = req.user
+        // if(!user) return res.status(500).json({msg:"User not found"})
+        let id = req.params._id
+        let {price} = req.body;
+        await restaurantModel.updateOne({"menu[_id]":id},{$set:{"menu[dishPrice]":price}})
+        res.status(200).json({msg : `menu updated`})
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({msg : error})
+    }
+})
 export default router
