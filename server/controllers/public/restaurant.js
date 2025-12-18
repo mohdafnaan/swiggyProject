@@ -5,6 +5,7 @@ import jwt from "jsonwebtoken";
 //import schema
 import restaurantModel from "../../models/Restaurants/Restaurants.js";
 
+
 // import functions
 import sendMail from "../../utils/mailer.js";
 import sendSms from "../../utils/sms.js";
@@ -42,10 +43,10 @@ router.post("/restaurant-register", async (req, res) => {
       "Swiggy Verification",
       `visit this link to verifiy your e-mail http://localhost:5000/public/restaurant-email-verify/:${emailToken}`
     );
-    await sendSms(
-      phone,
-      `visit this link to verify your phone http://localhost:5000/public/restaurant-phone-verify/:${phoneToken}`
-    );
+    // await sendSms(
+    //   phone,
+    //   `visit this link to verify your phone http://localhost:5000/public/restaurant-phone-verify/:${phoneToken}`
+    // );
 
     let object = {
       fullName,

@@ -1,4 +1,4 @@
-import mongoose  from "mongoose";
+   ximport mongoose  from "mongoose";
 
 const riderSchema = new mongoose.Schema(
     {

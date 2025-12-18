@@ -129,6 +129,7 @@ router.post("/rider-login", async (req, res) => {
     let token = await jwt.sign(payload, process.env.JWT_SECRET, {
       expiresIn: "1D",
     });
+    await riderModel.updateOne({email : user.email},{$set:{isOnline : true}})
     res.status(200).json({ msg: "login sucessfull", token });
   } catch (error) {
     console.log(error);
